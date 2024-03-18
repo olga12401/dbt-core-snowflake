@@ -62,6 +62,7 @@ CREATE STORAGE INTEGRATION my_azure_int
   AZURE_TENANT_ID = '<your_azure_tenant_id>';
 ```
 
+```
 CREATE STORAGE INTEGRATION azure_int
   TYPE = EXTERNAL_STAGE
   STORAGE_PROVIDER = 'AZURE'
@@ -88,9 +89,10 @@ Take note of the AZURE_CONSENT_URL value from the output. Copy the URL from the 
 
 ## Create schema
 
+```
 CREATE SCHEMA IF NOT EXISTS AZDB.file_formats;
 CREATE SCHEMA IF NOT EXISTS AZDB.external_stages;
-
+```
 
 ### Create file format
 
@@ -133,9 +135,11 @@ CREATE TABLE azdb.public.olist_order_reviews (
     review_answer_timestamp TIMESTAMP_NTZ 
 ); 
 ```
+2. Copy information
 
 ```
 COPY INTO azdb.public.olist_order_reviews
   FROM @azdb.external_stages.my_azure_stage
   PATTERN='.*olist_order_reviews_dataset.*.csv';
 ```
+
