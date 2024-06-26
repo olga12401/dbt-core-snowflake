@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: AZDB
+    schema: RAW
+    tables:
+      - name: order_payments
+        identifier: OLIST_ORDER_PAYMENTS
+      - name: order_reviews
+        identifier: olist_order_reviews 
+      - name: geolocation
+        identifier: GEOLOCATION_DATA
+      - name: customers
+        identifier: OLIST_CUSTOMERS
+      - name: orders
+        identifier: OLIST_ORDERS
+      - name: order_items
+        identifier: OLIST_ORDER_ITEMS
+      - name: products
+        identifier: OLIST_PRODUCTS
+      - name: product_category
+        identifier: PRODUCT_CATEGORY_TRANSLATION
+      
+       
+
