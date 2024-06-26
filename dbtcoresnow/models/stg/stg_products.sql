@@ -1,0 +1,21 @@
+{{
+  config(
+    materialized = 'ephemeral'
+    )
+}}
+
+WITH raw_products AS (
+    SELECT * FROM {{source('AZDB','products')}}
+)
+SELECT 
+    PRODUCT_ID ,
+	PRODUCT_CATEGORY_NAME AS CATEGORY_NAME,
+	PRODUCT_NAME_LENGTH ,
+	PRODUCT_DESCRIPTION_LENGTH ,
+	PRODUCT_PHOTOS_QTY ,
+	PRODUCT_WEIGHT_G ,
+	PRODUCT_LENGTH_CM ,
+	PRODUCT_HEIGHT_CM ,
+	PRODUCT_WIDTH_CM 
+FROM 
+    raw_products

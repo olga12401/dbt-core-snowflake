@@ -1,5 +1,5 @@
 # dbt-core-snowflake
-Deploy Analytics Engineering pipelines with DBT Core, Snowflake and Docker
+Deploy Analytics Engineering pipelines with DBT Core, Snowflake and Looker
 
 ## Objectives
 
@@ -9,13 +9,12 @@ Deploy Analytics Engineering pipelines with DBT Core, Snowflake and Docker
 ## Requirements
 
 1. dbt knowledge
-2. Installed Docker
-3. Downloaded Brazilian E-Commerce Public Dataset by Olist
-4. Azure Blob Storage
-5. Snowflake trial (or any data warehouse)
-6. Looker
-7. GitHub 
-8. VS Code
+2. Downloaded Brazilian E-Commerce Public Dataset by Olist
+3. Azure Blob Storage
+4. Snowflake trial (or any data warehouse)
+5. Looker
+6. GitHub 
+7. VS Code
 
 ## Implementation
 
@@ -54,7 +53,7 @@ CREATE DATABASE IF NOT EXISTS AZDB;
 This object specifies the Azure Blob Storage and provides a secure mechanism for Snowflake to interact with Azure resources.
 
 ```
-CREATE STORAGE INTEGRATION my_azure_int
+CREATE STORAGE INTEGRATION azure_int
   TYPE = EXTERNAL_STAGE
   STORAGE_PROVIDER = AZURE
   ENABLED = TRUE
@@ -86,6 +85,37 @@ DESC STORAGE INTEGRATION azure_int;
 ```
 
 Take note of the AZURE_CONSENT_URL value from the output. Copy the URL from the AZURE_CONSENT_URL property and open it in a web browser. You must be logged into your Azure account with sufficient permissions to grant consent.
+
+https://login.microsoftonline.com/40a6c74b-fac4-48db-b9dc-540ae32d96fe/oauth2/authorize?client_id=b7c3ffdc-2927-48ce-a4b7-0c14cb596ffb&response_type=code
+
+### Grant Permission in Azure
+
+You need to allow Snowflake's generated object ID to access your Azure Blob Storage:
+
+Navigate to the Azure Portal:
+
+1. Go to your Blob storage account.
+2. Select "Access control (IAM)" and click on "+ Add" to add a new role assignment.
+
+![Choose Storage Blob Data Contributor](image.png)
+
+3. Select members
+4. Returnt to snowflake and find AZURE_MULTI_TENANT_APP_NAME. You can get it, if run 
+
+```
+DESC STORAGE INTEGRATION azure_int;
+
+```
+
+
+![Use part before "_"](image-1.png)
+
+5.Select
+6.Review + assign
+
+
+
+
 
 ## Create schema
 
@@ -120,61 +150,14 @@ CREATE STAGE my_azure_stage
   FILE_FORMAT = azdb.file_formats.csv_format;
 ```
 
-### Preparere Snowflake environment    
+### Prepare Snowflake environment    
 
 1. Create a Target Table. Ensure you have a table in Snowflake that matches the schema of the data you're loading.
 
 ```
-CREATE TABLE azdb.public.olist_order_reviews (
-    review_id STRING,
-    order_id STRING,
-    review_score NUMBER(1,0),
-    review_comment_title STRING,
-    review_comment_message STRING,
-    review_creation_date TIMESTAMP_NTZ,
-    review_answer_timestamp TIMESTAMP_NTZ 
-); 
-```
-2. Copy information
+-- Create a  Table
 
-```
-COPY INTO azdb.public.olist_order_reviews
-  FROM @azdb.external_stages.my_azure_stage
-  PATTERN='.*olist_order_reviews_dataset.*.csv';
-```
-
-```
---Create storage integration object
-
-CREATE STORAGE INTEGRATION azure_int
-  TYPE = EXTERNAL_STAGE
-  STORAGE_PROVIDER = 'AZURE'
-  ENABLED = TRUE
-  AZURE_TENANT_ID = '40a6c74b-fac4-48db-b9dc-540ae32d96fe'
-  STORAGE_ALLOWED_LOCATIONS = ('azure://stazsnowflake.blob.core.windows.net/azurefiles/') ;
- 
-
-DESC STORAGE INTEGRATION azure_int;
-SHOW STORAGE INTEGRATIONS;
-
-CREATE DATABASE IF NOT EXISTS AZDB;
-CREATE SCHEMA IF NOT EXISTS AZDB.file_formats;
-CREATE SCHEMA IF NOT EXISTS AZDB.external_stages;
-
-// Create file format object
-CREATE OR REPLACE file format azdb.file_formats.csv_format
-    type = csv
-    field_delimiter = ','
-    field_optionally_enclosed_by = '"'
-    skip_header = 1;  
-
-USE SCHEMA azdb.external_stages;
-CREATE STAGE my_azure_stage
-  STORAGE_INTEGRATION = azure_int
-  URL = 'azure://stazsnowflake.blob.core.windows.net/azurefiles/'
-  FILE_FORMAT = azdb.file_formats.csv_format;
-
-CREATE TABLE azdb.public.olist_order_reviews (
+CREATE TABLE azdb.raw.olist_order_reviews (
     review_id STRING,
     order_id STRING,
     review_score NUMBER(1,0),
@@ -184,12 +167,11 @@ CREATE TABLE azdb.public.olist_order_reviews (
     review_answer_timestamp TIMESTAMP_NTZ 
 ); 
 
-COPY INTO azdb.public.olist_order_reviews
+COPY INTO azdb.raw.olist_order_reviews
   FROM @azdb.external_stages.my_azure_stage
   PATTERN='.*olist_order_reviews_dataset.*.csv';
 
-
-CREATE TABLE azdb.public.geolocation_data (
+CREATE TABLE azdb.raw.geolocation_data (
     geolocation_zip_code_prefix VARCHAR(5), 
     geolocation_lat FLOAT, -- Latitude, requiring floating-point to handle decimal values.
     geolocation_lng FLOAT, -- Longitude, also requiring floating-point for decimal values.
@@ -197,12 +179,12 @@ CREATE TABLE azdb.public.geolocation_data (
     geolocation_state CHAR(2) 
 );
 
-COPY INTO azdb.public.geolocation_data
+COPY INTO azdb.raw.geolocation_data
   FROM @azdb.external_stages.my_azure_stage
   PATTERN='.*olist_geolocation_dataset.*.csv';
 
   
-CREATE TABLE azdb.public.olist_order_items (
+CREATE TABLE azdb.raw.olist_order_items (
     order_id VARCHAR(32), 
     order_item_id INTEGER, 
     product_id VARCHAR(32), 
@@ -212,11 +194,11 @@ CREATE TABLE azdb.public.olist_order_items (
     freight_value FLOAT 
 );
 
-COPY INTO azdb.public.olist_order_items
+COPY INTO azdb.raw.olist_order_items
   FROM @azdb.external_stages.my_azure_stage
   PATTERN='.*olist_order_items.*.csv';
 
-CREATE TABLE azdb.public.olist_order_payments (
+CREATE TABLE azdb.raw.olist_order_payments (
     order_id VARCHAR(32), -- For UUIDs or similar unique identifiers.
     payment_sequential INTEGER, 
     payment_type VARCHAR(20), 
@@ -225,11 +207,11 @@ CREATE TABLE azdb.public.olist_order_payments (
 );
 
 
-COPY INTO azdb.public.olist_order_payments
+COPY INTO azdb.raw.olist_order_payments
   FROM @azdb.external_stages.my_azure_stage
   PATTERN='.*olist_order_payments.*.csv';
 
-CREATE TABLE azdb.public.olist_orders (
+CREATE TABLE azdb.raw.olist_orders (
     order_id VARCHAR(32), -- UUIDs for orders, requiring a VARCHAR type.
     customer_id VARCHAR(32), -- Similar to order_id, UUIDs for customers.
     order_status VARCHAR(20), -- Textual status of an order, e.g., "delivered".
@@ -241,11 +223,11 @@ CREATE TABLE azdb.public.olist_orders (
 );
 
 
-COPY INTO azdb.public.olist_orders
+COPY INTO azdb.raw.olist_orders
   FROM @azdb.external_stages.my_azure_stage
   PATTERN='.*olist_orders.*.csv';
 
-CREATE TABLE azdb.public.olist_products (
+CREATE TABLE azdb.raw.olist_products (
     product_id VARCHAR(32), 
     product_category_name VARCHAR(50),
     product_name_length INTEGER,
@@ -258,23 +240,23 @@ CREATE TABLE azdb.public.olist_products (
 );
 
 
-COPY INTO azdb.public.olist_products
+COPY INTO azdb.raw.olist_products
   FROM @azdb.external_stages.my_azure_stage
   PATTERN='.*olist_products.*.csv';
 
-CREATE TABLE azdb.public.olist_sellers (
+CREATE TABLE azdb.raw.olist_sellers (
     seller_id VARCHAR(32), 
     seller_zip_code_prefix VARCHAR(5), 
     seller_city VARCHAR(50), 
     seller_state CHAR(2) 
 );
 
-COPY INTO azdb.public.olist_sellers
+COPY INTO azdb.raw.olist_sellers
   FROM @azdb.external_stages.my_azure_stage
   PATTERN='.*olist_sellers.*.csv';
 
 
-CREATE TABLE azdb.public.olist_customers (
+CREATE TABLE azdb.raw.olist_customers (
     customer_id VARCHAR(32), 
     customer_unique_id VARCHAR(32), 
     customer_zip_code_prefix VARCHAR(5), 
@@ -282,18 +264,97 @@ CREATE TABLE azdb.public.olist_customers (
     customer_state CHAR(2) 
 );
 
-COPY INTO azdb.public.olist_customers
+COPY INTO azdb.raw.olist_customers
   FROM @azdb.external_stages.my_azure_stage
   PATTERN='.*olist_customers.*.csv';
 
 
-CREATE TABLE azdb.public.product_category_translation (
+CREATE TABLE azdb.raw.product_category_translation (
     product_category_name VARCHAR(50), -- The original category name, assuming it won't exceed 50 characters.
     product_category_name_english VARCHAR(50) -- The English translation of the category name.
 ); 
 
-COPY INTO azdb.public.product_category_translation
+COPY INTO azdb.raw.product_category_translation
   FROM @azdb.external_stages.my_azure_stage
   PATTERN='.*product_category_name_translation.*.csv';
 
 ```
+
+### Create a Role for dbt
+
+Before creating a user, it's a good idea to create a role that will be assigned to the dbt user. This role can then be granted the necessary permissions to access the relevant databases and schemas.
+```
+  -- Use an admin role
+USE ROLE ACCOUNTADMIN;
+
+-- Create the `dbt_role` role
+CREATE ROLE IF NOT EXISTS dbt_role;
+GRANT ROLE dbt_role TO ROLE ACCOUNTADMIN;
+GRANT OPERATE ON WAREHOUSE az_wh TO ROLE dbt_role;
+
+-- Create the `dbt` user and assign to role
+CREATE USER IF NOT EXISTS dbt
+  PASSWORD='azdbtsnowlooker123'
+  LOGIN_NAME='dbt'
+  MUST_CHANGE_PASSWORD=FALSE
+  DEFAULT_WAREHOUSE='AZ_WH'
+  DEFAULT_ROLE='dbt_role'
+  DEFAULT_NAMESPACE='AZDB.RAW'
+  COMMENT='DBT user used for data transformation';
+GRANT ROLE dbt_role to USER dbt;
+
+-- Set up permissions to role `transform`
+GRANT ALL ON WAREHOUSE AZ_WH TO ROLE dbt_role; 
+GRANT ALL ON DATABASE AZDB to ROLE dbt_role;
+GRANT ALL ON ALL SCHEMAS IN DATABASE AZDB to ROLE dbt_role;
+GRANT ALL ON FUTURE SCHEMAS IN DATABASE AZDB to ROLE dbt_role;
+GRANT ALL ON ALL TABLES IN SCHEMA AZDB.RAW to ROLE dbt_role;
+GRANT ALL ON FUTURE TABLES IN SCHEMA AZDB.RAW to ROLE dbt_role;
+
+
+```
+
+
+
+
+## Connecting dbt and snowflake
+
+### Create venv
+
+Check python version 
+
+```
+python3.11 --version
+```
+
+First, choose or create a directory where you want to place your virtual environment. Then, create the virtual environment using the following command.
+
+```
+python3.11 -m venv myenv
+```
+
+Replace myenv with your desired name for the virtual environment.
+
+Activate the Virtual Environment (MAC or WSL Ubuntu)
+
+```
+source myenv/bin/activate
+```
+
+### Install dbt-snowflake
+
+```
+pip install dbt-snowflake==1.8.0
+
+dbt init dbtcoresnow 
+```
+Configuration database 
+[1] snowflake
+Desired authentication type option (enter a number): 1                 
+password (dev password): 
+role (dev role): dbt_role
+warehouse (warehouse name): AZ_WH
+database (default database that dbt will build objects in): AZDB
+schema (default schema that dbt will build objects in): DEV
+threads (1 or more) [1]: 1 
+

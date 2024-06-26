@@ -1,0 +1,13 @@
+WITH raw_order_reviews AS (
+    SELECT * FROM {{source('AZDB','order_reviews')}}
+)
+SELECT
+    REVIEW_ID ,
+	ORDER_ID ,
+	REVIEW_SCORE ,
+	REVIEW_COMMENT_TITLE ,
+	REVIEW_COMMENT_MESSAGE ,
+	REVIEW_CREATION_DATE ,
+	REVIEW_ANSWER_TIMESTAMP 
+FROM
+    raw_order_reviews
