@@ -17,6 +17,14 @@ view: dim_customers {
     type: string
     sql: ${TABLE}."CUSTOMER_ZIP_CODE_PREFIX" ;;
   }
+  dimension: geolocation_lat {
+    type: number
+    sql: ${TABLE}."GEOLOCATION_LAT" ;;
+  }
+  dimension: geolocation_lng {
+    type: number
+    sql: ${TABLE}."GEOLOCATION_LNG" ;;
+  }
   measure: count {
     type: count
   }
