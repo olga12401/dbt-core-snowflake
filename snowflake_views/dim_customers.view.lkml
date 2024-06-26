@@ -14,7 +14,7 @@ view: dim_customers {
     sql: ${TABLE}."CUSTOMER_STATE" ;;
   }
   dimension: customer_zip_code_prefix {
-    type: string
+    type: zipcode
     sql: ${TABLE}."CUSTOMER_ZIP_CODE_PREFIX" ;;
   }
   dimension: geolocation_lat {
