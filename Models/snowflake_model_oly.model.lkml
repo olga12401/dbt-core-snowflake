@@ -1,6 +1,8 @@
 connection: "snowflake_oly"
 
-include: "/snowflake_views/*.view.lkml"                # include all views in the views/ folder in this project
+include: "/snowflake_views/*.view.lkml"
+include: "/snowflake_explores/*.explore.lkml"
+# include all views in the views/ folder in this project
 # include: "/**/*.view.lkml"                 # include all views in this project
 # include: "my_dashboard.dashboard.lookml"   # include a LookML dashboard called my_dashboard
 
