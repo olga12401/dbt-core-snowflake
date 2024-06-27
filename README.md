@@ -1,7 +1,9 @@
 # Azure blob storage-DBT-Snowflake-Looker
 Deploy Analytics Engineering pipelines with DBT Core, Snowflake and Looker
 
-## Objectives
+## Overview
+
+This project showcases a example of concept for implementting a dimensional modeling strategy. The data was loaded from Azure Blob Storage into Snowflake and later transformed with DBT and analyzed in Looker.
 
 ## Requirements
 
@@ -30,11 +32,19 @@ Deploy Analytics Engineering pipelines with DBT Core, Snowflake and Looker
 9. Report in Looker
 
 
-6. Made all transformation
+## DAG
 
-Run '''dbt run''' to execute the models and transform the data.
-Run '''dbt test''' to run tests on the transformed data.
-Run '''dbt docs generate''' to generate documentation for the models.
-Run '''dbt docs serve''' to view the documentation in your browser.
+
+![alt text](image.png)
+
+
+## Looker
+
+
+
+## Report
+
+![alt text](image-1.png)
+
  
 
