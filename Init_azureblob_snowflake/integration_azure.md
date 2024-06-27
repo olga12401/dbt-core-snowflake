@@ -54,7 +54,7 @@ https://login.microsoftonline.com/40a6c74b-fac4-48db-b9dc-540ae32d96fe/oauth2/au
 
 You need to allow Snowflake's generated object ID to access your Azure Blob Storage:
 
-Navigate to the Azure Portal:
+Navigate to the Azure Portal: 
 
 1. Go to your Blob storage account.
 2. Select "Access control (IAM)" and click on "+ Add" to add a new role assignment. Choose Storage Blob Data Contributor.
