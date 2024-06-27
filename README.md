@@ -1,10 +1,7 @@
-# dbt-core-snowflake
+# Azure blob storage-DBT-Snowflake-Looker
 Deploy Analytics Engineering pipelines with DBT Core, Snowflake and Looker
 
 ## Objectives
-
-
-
 
 ## Requirements
 
@@ -23,6 +20,11 @@ Deploy Analytics Engineering pipelines with DBT Core, Snowflake and Looker
 3. Setup virtual environment
 4. Install dbt 
 5. Initiate integration between dbt & snowflake
+
+## Architecture
+
+![alt text](architecture.png)
+
 
 ## Connecting dbt and snowflake
 
