@@ -57,9 +57,9 @@ You need to allow Snowflake's generated object ID to access your Azure Blob Stor
 Navigate to the Azure Portal:
 
 1. Go to your Blob storage account.
-2. Select "Access control (IAM)" and click on "+ Add" to add a new role assignment.
+2. Select "Access control (IAM)" and click on "+ Add" to add a new role assignment. Choose Storage Blob Data Contributor.
 
-![Choose Storage Blob Data Contributor](image.png)
+![alt text](image.png)
 
 3. Select members
 4. Returnt to snowflake and find AZURE_MULTI_TENANT_APP_NAME. You can get it, if run 
@@ -68,9 +68,10 @@ Navigate to the Azure Portal:
 DESC STORAGE INTEGRATION azure_int;
 
 ```
+and copy the part before "_"
 
+![alt text](<select members.png>)
 
-![Use part before "_"](image-1.png)
 
 5.Select
 6.Review + assign

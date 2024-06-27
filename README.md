@@ -23,12 +23,11 @@ Deploy Analytics Engineering pipelines with DBT Core, Snowflake and Looker
 
 ## Architecture
 
-![alt text](architecture.png)
-
+![alt text](Architecture.png)
 
 ## Connecting dbt and snowflake
 
-### Create venv
+### Create venvgit status
 
 Check python version 
 
@@ -57,19 +56,30 @@ pip install dbt-snowflake==1.8.0
 
 dbt init dbtcoresnow 
 ```
-Configuration database 
+### Configuration database 
+
 [1] snowflake
-Desired authentication type option (enter a number): 1                 
+
+Desired authentication type option (enter a number): 1    
+
 password (dev password): 
+
 role (dev role): dbt_role
+
 warehouse (warehouse name): AZ_WH
+
 database (default database that dbt will build objects in): AZDB
+
 schema (default schema that dbt will build objects in): DEV
+
 threads (1 or more) [1]: 1 
 
 
 6. Made all transformation
+
 Run '''dbt run''' to execute the models and transform the data.
 Run '''dbt test''' to run tests on the transformed data.
 Run '''dbt docs generate''' to generate documentation for the models.
 Run '''dbt docs serve''' to view the documentation in your browser.
+
+
