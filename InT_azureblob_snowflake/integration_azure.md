@@ -70,9 +70,8 @@ DESC STORAGE INTEGRATION azure_int;
 ```
 and copy the part before "_"
 
-![alt text](image-1.png)
+![alt text](<select members.png>)
 
-For ky
 
 5.Select
 6.Review + assign

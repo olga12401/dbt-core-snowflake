@@ -23,12 +23,11 @@ Deploy Analytics Engineering pipelines with DBT Core, Snowflake and Looker
 
 ## Architecture
 
-![alt text](image-2.png)
-
+![alt text](Architecture.png)
 
 ## Connecting dbt and snowflake
 
-### Create venv
+### Create venvgit status
 
 Check python version 
 
