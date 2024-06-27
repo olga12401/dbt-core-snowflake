@@ -2,22 +2,28 @@ version: 2
 
 models:
   - name: dim_customers
+    description: Cleansed table with contains Customers
     columns:
       - name: customer_id
+        description: primary key for customers
         tests:
           - unique
           - not_null
 
   - name: dim_products
+    description: Cleansed table with contains products
     columns:  # Ensure proper indentation before "- name"
       - name: product_id
+        description: primary key for products
         tests:
           - unique
           - not_null
 
   - name: fct_orders
+    description: Cleansed table with contains Orders
     columns:
       - name: order_id
+        description: primary key for orders
         tests:
           - not_null
       - name: order_status

@@ -13,7 +13,7 @@ p AS (
 ),
 t AS (
     SELECT *
-    FROM {{ref('src_product_category')}}
+    FROM {{ref('stg_product_category')}}
 )
 
 SELECT 

@@ -1,15 +1,15 @@
-Welcome to your new dbt project!
-
-### Using the starter project
+### Using DBT for Snowflake
 
 Try running the following commands:
 - dbt run
 - dbt test
 
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+
+6. Made all transformation
+
+Run '''dbt run''' to execute the models and transform the data.
+Run '''dbt test''' to run tests on the transformed data.
+Run '''dbt docs generate''' to generate documentation for the models.
+Run '''dbt docs serve''' to view the documentation in your browser.
+ 
