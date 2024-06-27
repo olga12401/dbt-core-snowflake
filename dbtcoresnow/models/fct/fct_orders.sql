@@ -41,7 +41,7 @@ fact_orders as (
         round(order_items.total_order_item, 2) as total_order_item,
         round(order_items.unit_price,2) as unit_price,
         order_items.qty_items,
-        datediff(day, orders.order_created, orders.order_delivered_customer_date) as lead_time_days
+        round(datediff(day, orders.order_created, orders.order_delivered_customer_date), 2) as lead_time_days
     from orders
     left join order_items on orders.order_id = order_items.order_id
 )
